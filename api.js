@@ -9,6 +9,10 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 
+app.get('/', (req, res) => {
+  res.sendFile('./index.html');
+});
+
 const serviceAccount = {
   private_key: process.env.PR_KEY,
   client_email: process.env.CL_EMAIL
