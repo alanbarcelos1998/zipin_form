@@ -469,7 +469,55 @@
 
                 const data = await response.json();
 
-                cep = data[0].cep
+                // Função para encontrar a correspondência mais próxima
+                function findClosestMatch(userResponse, apiResponse) {
+                    let closestMatch = null;
+                    let closestDistance = Infinity;
+
+                    apiResponse.forEach(location => {
+                        const distance = levenshteinDistance(userResponse.toLowerCase(), location.bairro.toLowerCase());
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestMatch = location;
+                        }
+                    });
+
+                    return closestMatch;
+                }
+
+                // Função para calcular a distância de Levenshtein entre duas strings
+                function levenshteinDistance(a, b) {
+                    const matrix = [];
+
+                    for (let i = 0; i <= b.length; i++) {
+                        matrix[i] = [i];
+                    }
+
+                    for (let j = 0; j <= a.length; j++) {
+                        matrix[0][j] = j;
+                    }
+
+                    for (let i = 1; i <= b.length; i++) {
+                        for (let j = 1; j <= a.length; j++) {
+                            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                                matrix[i][j] = matrix[i - 1][j - 1];
+                            } else {
+                                matrix[i][j] = Math.min(
+                                    matrix[i - 1][j - 1] + 1,
+                                    matrix[i][j - 1] + 1,
+                                    matrix[i - 1][j] + 1
+                                );
+                            }
+                        }
+                    }
+
+                    return matrix[b.length][a.length];
+                }
+
+                // Encontrar e exibir a correspondência mais próxima
+                const closestMatch = findClosestMatch(bairro, data);
+
+                cep = closestMatch.cep
 
                 const responseInfoEndereco = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {
                     method: 'GET',
@@ -505,7 +553,8 @@
                 vagas: parseInt(vagas)
             }
 
-            const response = await fetch(`https://fabio-formulario-avm.zvnqey.easypanel.host/doc`, {
+            let urlApi = "https://fabio-formulario-avm.zvnqey.easypanel.host/doc"
+            const response = await fetch(`http://localhost:3000/doc`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

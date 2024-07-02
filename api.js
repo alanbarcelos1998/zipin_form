@@ -87,25 +87,25 @@ async function geoLocation(cep) {
 
 async function avm(obj) {
   try {
-    const token = await getTokenDataZap()
+    const token = await getTokenDataZap();
     const url = "https://datazap-gateway.zap.com.br/rdr/avm";
     const options = {
-      method: "post",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: obj,
     };
 
     const response = await fetch(url, options);
-
     if (!response.ok) {
       throw new Error(`HTTP error status: ${response.status}`);
     }
 
     const data = await response.json();
-    return data
+    console.error(data);
+    return data;
   } catch (error) {
     console.error('Error:', error);
     return { "erro": "Erro ao obter avm", "status": 404 };
@@ -114,25 +114,29 @@ async function avm(obj) {
 
 async function bros(obj) {
   try {
-    const token = await getTokenDataZap()
+    const token = await getTokenDataZap();
     const url = "https://datazap-gateway.zap.com.br/rdr/bros";
     const options = {
-      method: "post",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: obj,
     };
 
     const response = await fetch(url, options);
+    const data = await response.json();
+    
+    if(data.detail){
+      return [];
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error status: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data
+    return data;
   } catch (error) {
     console.error('Error:', error);
     return { "erro": "Erro ao obter bros", "status": 404 };
@@ -141,13 +145,13 @@ async function bros(obj) {
 
 app.post('/doc', async (req, res) => {
   try {
-    obj = req.body
+    const obj = req.body;
 
     const responseGeo = await geoLocation(req.body.cep);
 
-    if (responseGeo.status == 404) {
-      res.json({ "erro": "Falha ao encontrar CEP", "status": 404 })
-      return
+    if (responseGeo.status === 404) {
+      res.json({ "erro": "Falha ao encontrar CEP", "status": 404 });
+      return;
     }
 
     const objDataZap = JSON.stringify({
@@ -161,21 +165,18 @@ app.post('/doc', async (req, res) => {
       "vagas": obj.vagas,
       "latitude": responseGeo.location.lat,
       "longitude": responseGeo.location.lon,
-    })
+    });
 
-    const responseAvm = await avm(objDataZap)
+    const responseAvm = await avm(objDataZap);
 
-    if (responseAvm.status == 404) {
-      res.json({ "erro": "Erro ao obter resposta do DataZap", "status": 404 })
+    if (responseAvm.status === 404) {
+      res.json({ "erro": "Erro ao obter resposta do DataZap AVM", "status": 404 });
+      return;
     }
 
-    const responseBros = await bros(objDataZap)
+    const responseBros = await bros(objDataZap);
 
-    if (responseBros.status == 404) {
-      res.json({ "erro": "Erro ao obter resposta do DataZap", "status": 404 })
-    }
-
-    const now = new Date()
+    const now = new Date();
 
     const objExcel = {
       "end": obj.logradouro,
@@ -198,20 +199,21 @@ app.post('/doc', async (req, res) => {
       "bros": responseBros,
       "lat": responseGeo.location.lat,
       "lon": responseGeo.location.lon
-    }
+    };
 
-    const responseLinkExcel = await linkExcel(objExcel)
+    const responseLinkExcel = await linkExcel(objExcel);
 
     res.json({
       "link": responseLinkExcel,
       "avm": responseAvm,
       "bros": responseBros
-    })
+    });
   } catch (error) {
     console.error('Error:', error);
-    return { "erro": "Erro na requisição", "status": 404 };
+    res.json({ "erro": "Erro na requisição", "status": 404 });
   }
-})
+});
+
 
 async function linkExcel(obj) {
   try {
@@ -394,7 +396,7 @@ async function linkExcel(obj) {
     row10.getCell(11).font = { bold: true, size: 12, name: 'Arial' }
 
     if (obj.bros.detail || Object.keys(obj.bros).length == 0) {
-      console.log("teste");
+      // console.log("teste");
     } else {
       obj.bros.forEach((element) => {
         const row = worksheet.addRow({
