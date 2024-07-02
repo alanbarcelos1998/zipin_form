@@ -5,12 +5,20 @@ import express, { response } from "express"
 import cors from "cors"
 import 'dotenv/config'
 import fetch from "node-fetch";
+import path from "path";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 const app = express();
 app.use(cors())
 app.use(express.json())
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const publicPath = path.join(__dirname, 'public');
+app.use('/static', express.static(publicPath));
+
 app.get('/', (req, res) => {
-  res.sendFile('./index.html');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const serviceAccount = {
