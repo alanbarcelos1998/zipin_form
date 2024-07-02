@@ -521,6 +521,10 @@
                 document.getElementById("modal_erro").style.display = "flex"
                 document.getElementById("corpo_erro_modal").innerText = "Erro ao processar dados, favor verificar os dados informados."
                 document.getElementById("form-div").style.opacity = 0.5
+                document.getElementById('form-init').style.display = "flex"
+                document.getElementById('carregamento').style.display = "none"
+                document.getElementById('resposta').style.display = "none"
+                return;
             }
 
             document.getElementById('carregamento').style.display = "none"
