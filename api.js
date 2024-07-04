@@ -104,7 +104,7 @@ async function avm(obj) {
     }
 
     const data = await response.json();
-    console.error(data);
+    
     return data;
   } catch (error) {
     console.error('Error:', error);
@@ -201,10 +201,10 @@ app.post('/doc', async (req, res) => {
       "lon": responseGeo.location.lon
     };
 
-    const responseLinkExcel = await linkExcel(objExcel);
+    // const responseLinkExcel = await linkExcel(objExcel);
 
     res.json({
-      "link": responseLinkExcel,
+      "excelobj": objExcel,
       "avm": responseAvm,
       "bros": responseBros
     });
@@ -213,6 +213,17 @@ app.post('/doc', async (req, res) => {
     res.json({ "erro": "Erro na requisição", "status": 404 });
   }
 });
+
+app.post('/excel', async (req,res) =>{
+  try {
+    const responseExcel = await linkExcel(req.body)
+
+    res.json({"link" : responseExcel})
+  } catch (error) {
+    console.error('Error:', error);
+    res.json({ "erro": "Erro na requisição", "status": 404 });
+  }
+})
 
 
 async function linkExcel(obj) {
