@@ -178,14 +178,14 @@
 
                     <div class="form-check">
                         <input class="form-check-input border border-black tipoimovel" type="radio" name="tipoDeImovel"
-                            id="tipoimovel" value="apartamento">
-                        <label class="form-check-label" for="tipo1.1">Apartamento</label>
+                            id="apt_imovel" value="apartamento">
+                        <label class="form-check-label" for="apt_imovel">Apartamento</label>
                     </div>
 
                     <div class="form-check">
                         <input class="form-check-input border border-black tipoimovel" type="radio" name="tipoDeImovel"
-                            id="tipoimovel" value="casa">
-                        <label class="form-check-label" for="casa">Casa</label>
+                            id="casa_imovel" value="casa">
+                        <label class="form-check-label" for="casa_imovel">Casa</label>
                     </div>
 
                 </div>
@@ -197,14 +197,14 @@
 
                     <div class="form-check">
                         <input class="form-check-input border border-black tipotransacao" type="radio"
-                            name="tipoDeTransacao" id="" value="venda" required>
-                        <label class="form-check-label" for="tipo1.1">Venda</label>
+                            name="tipoDeTransacao" id="venda_transacao" value="venda" required>
+                        <label class="form-check-label" for="venda_transacao">Venda</label>
                     </div>
 
                     <div class="form-check">
                         <input class="form-check-input border border-black tipotransacao" type="radio"
-                            name="tipoDeTransacao" id="" value="locacao" required>
-                        <label class="form-check-label" for="casa">Locação</label>
+                            name="tipoDeTransacao" id="locacao_transacao" value="locacao" required>
+                        <label class="form-check-label" for="locacao_transacao">Locação</label>
                     </div>
 
                 </div>
@@ -212,32 +212,32 @@
 
             <div class="col-md-6">
                 <label for="areautil" class="form-label">Área útil *</label>
-                <input type="text" class="form-control required border border-black rounded-0" id="areautil" required>
+                <input type="text" class="form-control required border border-black rounded-0" id="areautil" pattern="[0-9]*" inputmode="numeric" required>
             </div>
 
             <div class="col-md-6">
                 <label for="anoconstrucao" class="form-label">Ano de contrução *</label>
-                <input type="text" class="form-control border border-black rounded-0" id="anocontrucao" required>
+                <input type="text" class="form-control border border-black rounded-0" id="anocontrucao" pattern="[0-9]*" inputmode="numeric" required>
             </div>
 
             <div class="col-md-6">
                 <label for="dormitorio" class="form-label">Dormitórios *</label>
-                <input type="text" class="form-control border border-black rounded-0" id="dormitorio">
+                <input type="text" class="form-control border border-black rounded-0" pattern="[0-9]*" inputmode="numeric" id="dormitorio">
             </div>
 
             <div class="col-md-6">
                 <label for="suites" class="form-label">Suites *</label>
-                <input type="text" class="form-control border border-black rounded-0" id="suites">
+                <input type="text" class="form-control border border-black rounded-0" pattern="[0-9]*" inputmode="numeric" id="suites">
             </div>
 
             <div class="col-md-6">
                 <label for="banheiros" class="form-label">Banheiros *</label>
-                <input type="text" class="form-control border border-black rounded-0" id="banheiros">
+                <input type="text" class="form-control border border-black rounded-0" pattern="[0-9]*" inputmode="numeric" id="banheiros">
             </div>
 
             <div class="col-md-6">
                 <label for="vagas" class="form-label">Vagas *</label>
-                <input type="text" class="form-control border border-black rounded-0" id="vagas">
+                <input type="text" class="form-control border border-black rounded-0" pattern="[0-9]*" inputmode="numeric" id="vagas">
             </div>
 
             <div class="final-button d-grid gap-2 col-6 mx-auto">
@@ -315,7 +315,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <span style="font-size: 14pt;">Mín:</span>
-                    <span id="min-resposta"></span>
+                    <span id="min-resposta" style="font-size: 14pt;" ></span>
                 </div>
                 <div class="col-md-4">
                     <span style="font-size: 14pt;">Méd:</span>
@@ -419,7 +419,7 @@
                 let formattedValue = formatter.format(value);
 
                 // Substitui a vírgula por um ponto para evitar confusão com a formatação de moeda
-                formattedValue = formattedValue.replace('.', ',');
+                // formattedValue = formattedValue.replace('.', ',');
 
                 return formattedValue;
             }
@@ -458,7 +458,7 @@
                 });
 
                 areaUtil.addEventListener('input', function (event) {
-                    const newValue = areaUtil.value.replace(/[^0-9.]/g, '');
+                    const newValue = areaUtil.value.replace(/[^0-9,]/g, '');
                     areaUtil.value = newValue;
                 })
 
@@ -525,6 +525,9 @@
                 let tipoimovel = document.querySelectorAll(".tipoimovel");
                 let tipotransacao = document.querySelectorAll(".tipotransacao");
                 let areautil = document.getElementById("areautil").value;
+                areautil = areautil.replace(/,/g, '.')
+                areautil = parseFloat(areautil)
+                console.log(areautil);
                 let anoconstrucao = document.getElementById("anocontrucao").value;
                 let dormitorio = document.getElementById("dormitorio").value;
                 let suites = document.getElementById("suites").value;

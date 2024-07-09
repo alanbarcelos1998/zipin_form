@@ -268,9 +268,9 @@ async function linkExcel(obj) {
     const row1 = worksheet.getRow(1)
     row1.getCell(1).value = "Características do imóvel";
     row1.getCell(1).font = { bold: true, size: 20, color: 'white' }
-    row1.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } }
-    row1.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } }
-    row1.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } };
+    row1.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } }
+    row1.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } }
+    row1.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } };
     row1.height = 40
 
     const row2 = worksheet.getRow(2)
@@ -328,9 +328,9 @@ async function linkExcel(obj) {
     const row5 = worksheet.getRow(5)
     row5.getCell(1).value = "Valores do imóvel";
     row5.getCell(1).font = { bold: true, size: 18, color: 'white' }
-    row5.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } }
-    row5.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } }
-    row5.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } };
+    row5.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } }
+    row5.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } }
+    row5.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } };
     row5.height = 40
 
     const row6 = worksheet.getRow(6)
@@ -377,9 +377,9 @@ async function linkExcel(obj) {
     const row9 = worksheet.getRow(9)
     row9.getCell(1).value = "Imóveis semelhantes";
     row9.getCell(1).font = { bold: true, size: 18, color: 'white' }
-    row9.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } }
-    row9.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } }
-    row9.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93DB70' } };
+    row9.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } }
+    row9.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } }
+    row9.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '447EFF' } };
     row9.height = 40
 
     const row10 = worksheet.getRow(10)
