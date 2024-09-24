@@ -592,10 +592,10 @@
                 //     }
                 // }
 
-                if (cep.length == 0) {
-                    document.getElementById("cep").className = "form-control border border-danger rounded-0"
-                    return;
-                }
+                // if (cep.length == 0) {
+                //     document.getElementById("cep").className = "form-control border border-danger rounded-0"
+                //     return;
+                // }
 
                 if (!tipoimovel[0].checked && !tipoimovel[1].checked) {
                     document.getElementById("modal_erro").style.display = "flex"
@@ -768,7 +768,6 @@
                 
 
                 let urlApi = "https://fabio-formulario-avm.zvnqey.easypanel.host/doc"
-                
                 const response = await fetch(urlApi, {
                     method: 'POST',
                     headers: {
