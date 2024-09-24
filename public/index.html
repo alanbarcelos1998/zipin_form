@@ -104,21 +104,26 @@
     <div class="container p-5" id="form-div">
         <form class="row g-3" id="form-init">
             <div class="mb-3 col-md-12">
+                <!-- <div class="mb-3 col-md-4" id="cep_display">
+                    <label for="text" class="form-label">CEP *</label>
+                    <input type="cep" id="cep" class="form-control border border-black rounded-0"
+                        placeholder="00000-000" required>
+                </div> -->
+
+                <!-- <div class="mb-3 col-md-2" style="display: none;">
+                    <div class="form-check">
+                        <input type="checkbox" id="naoseicep" class="form-check-input border border-black">
+                        <label for="text" class="form-text-label">Não sei o CEP</label>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="row"  id="endereco_completo">
                 <div class="mb-3 col-md-4" id="cep_display">
                     <label for="text" class="form-label">CEP *</label>
                     <input type="cep" id="cep" class="form-control border border-black rounded-0"
                         placeholder="00000-000" required>
                 </div>
-
-                <div class="mb-3 col-md-2" style="display: none;">
-                    <div class="form-check">
-                        <input type="checkbox" id="naoseicep" class="form-check-input border border-black">
-                        <label for="text" class="form-text-label">Não sei o CEP</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" style="display: none;" id="endereco_completo">
                 <div class="col-md-4">
                     <label for="text" class="form-text-label mb-2">Estado *</label>
                     <select class="form-select border border-black rounded-0" aria-label="Default select example"
@@ -162,12 +167,12 @@
                     <input type="bairro" id="bairro" class="form-control border border-black rounded-0" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="text" class="form-label mt-3">Logradouro *</label>
+                    <label for="text" class="form-label">Logradouro *</label>
                     <input type="logradouro" id="logradouro" class="form-control border border-black rounded-0"
                         required>
                 </div>
                 <div class="col-md-4">
-                    <label for="text" class="form-label mt-3">Número *</label>
+                    <label for="text" class="form-label">Número *</label>
                     <input type="numero" id="numero" class="form-control border border-black rounded-0" required>
                 </div>
             </div>
@@ -440,6 +445,33 @@
                 let banheiros = document.getElementById('banheiros');
                 let vagas = document.getElementById('vagas');
 
+                cepInput.addEventListener('blur', function(){
+                    let cep = this.value.replace(/\D/g, '');
+
+                    if(cep.length === 8){
+                        //Faz a requisição para a API do ViaCEP
+                        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if(!data.erro) {
+                                //Preenche os campos com os dados recebidos
+                                document.getElementById('logradouro').value = data.logradouro;
+                                document.getElementById('cidade').value = data.localidade;
+                                document.getElementById('bairro').value = data.bairro;
+                                document.getElementById('estado').value = data.uf.toLowerCase();
+                            } else {
+                                document.getElementById('logradouro').value = "";
+                                document.getElementById('cidade').value = "";
+                                document.getElementById('bairro').value = "";
+                                document.getElementById('estado').value = "";
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro:', error)
+                        })
+                    }
+                })
+
                 cepInput.addEventListener('input', function (event) {
                     let value = event.target.value;
                     // Remove caracteres não numéricos, incluindo letras
@@ -487,15 +519,15 @@
                     vagas.value = newValue;
                 })
 
-                document.getElementById("naoseicep").addEventListener('change', () => {
-                    if (document.getElementById("naoseicep").checked) {
-                        document.getElementById("endereco_completo").style.display = "flex"
-                        document.getElementById("cep_display").style.display = "none"
-                    } else {
-                        document.getElementById("endereco_completo").style.display = "none"
-                        document.getElementById("cep_display").style.display = "block"
-                    }
-                })
+                // document.getElementById("naoseicep").addEventListener('change', () => {
+                //     if (document.getElementById("naoseicep").checked) {
+                //         document.getElementById("endereco_completo").style.display = "flex"
+                //         document.getElementById("cep_display").style.display = "none"
+                //     } else {
+                //         document.getElementById("endereco_completo").style.display = "none"
+                //         document.getElementById("cep_display").style.display = "block"
+                //     }
+                // })
 
             });
 
@@ -516,7 +548,7 @@
                 document.getElementById("vagas").className = "form-control required border rounded-0 border-black"
 
                 let cep = document.getElementById("cep").value;
-                let naosei = document.getElementById("naoseicep").checked;
+                // let naosei = document.getElementById("naoseicep").checked;
                 let estado = document.getElementById("estado").value;
                 let cidade = document.getElementById("cidade").value;
                 let bairro = document.getElementById("bairro").value;
@@ -527,41 +559,40 @@
                 let areautil = document.getElementById("areautil").value;
                 areautil = areautil.replace(/,/g, '.')
                 areautil = parseFloat(areautil)
-                console.log(areautil);
                 let anoconstrucao = document.getElementById("anocontrucao").value;
                 let dormitorio = document.getElementById("dormitorio").value;
                 let suites = document.getElementById("suites").value;
                 let banheiros = document.getElementById("banheiros").value;
                 let vagas = document.getElementById("vagas").value;
 
-                if (naosei) {
-                    if (estado.length == 0) {
-                        document.getElementById("estado").className = "form-select border rounded-0 border-danger"
-                        return;
-                    }
+                // if (naosei) {
+                //     if (estado.length == 0) {
+                //         document.getElementById("estado").className = "form-select border rounded-0 border-danger"
+                //         return;
+                //     }
 
-                    if (cidade.length == 0) {
-                        document.getElementById("cidade").className = "form-control border border-danger rounded-0"
-                        return;
-                    }
+                //     if (cidade.length == 0) {
+                //         document.getElementById("cidade").className = "form-control border border-danger rounded-0"
+                //         return;
+                //     }
 
-                    if (bairro.length == 0) {
-                        document.getElementById("bairro").className = "form-control border border-danger rounded-0"
-                        return;
-                    }
+                //     if (bairro.length == 0) {
+                //         document.getElementById("bairro").className = "form-control border border-danger rounded-0"
+                //         return;
+                //     }
 
-                    if (logradouro.length == 0) {
-                        document.getElementById("logradouro").className = "form-control border border-danger rounded-0"
-                        return;
-                    }
+                //     if (logradouro.length == 0) {
+                //         document.getElementById("logradouro").className = "form-control border border-danger rounded-0"
+                //         return;
+                //     }
 
-                    if (numero.length == 0) {
-                        document.getElementById("numero").className = "form-control border border-danger rounded-0"
-                        return;
-                    }
-                }
+                //     if (numero.length == 0) {
+                //         document.getElementById("numero").className = "form-control border border-danger rounded-0"
+                //         return;
+                //     }
+                // }
 
-                if (!naosei && cep.length == 0) {
+                if (cep.length == 0) {
                     document.getElementById("cep").className = "form-control border border-danger rounded-0"
                     return;
                 }
@@ -634,12 +665,13 @@
                     });
                     const data = await response.json();
 
-                    if (!naosei) {
-                        bairro = data.bairro
-                        cidade = data.localidade
-                        logradouro = data.logradouro
-                        estado = data.uf
-                    }
+                    // if (!naosei) {
+                       
+                    // }
+                    bairro = data.bairro
+                    cidade = data.localidade
+                    logradouro = data.logradouro
+                    estado = data.uf
                 } else {
                     const response = await fetch(`https://viacep.com.br/ws/${estado}/${encodeURIComponent(cidade)}/${encodeURIComponent(logradouro)}/json/`, {
                         method: 'GET',
@@ -733,8 +765,10 @@
                     banheiros: parseInt(banheiros),
                     vagas: parseInt(vagas)
                 }
+                
 
                 let urlApi = "https://fabio-formulario-avm.zvnqey.easypanel.host/doc"
+                
                 const response = await fetch(urlApi, {
                     method: 'POST',
                     headers: {
@@ -816,7 +850,7 @@
                 document.getElementById('resposta').style.display = "none"
                 document.getElementById('form-init').style.display = "flex"
                 document.getElementById("cep").value = '';
-                document.getElementById("naoseicep").checked = false;
+                // document.getElementById("naoseicep").checked = false;
                 document.getElementById("estado").value = '';
                 document.getElementById("cidade").value = '';
                 document.getElementById("bairro").value = '';

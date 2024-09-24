@@ -85,6 +85,41 @@ async function geoLocation(cep) {
   }
 }
 
+async function geoCodingGoogleMaps(addresses){
+  try {
+
+    let address = `${addresses.logradouro}, ${addresses.numero}, ${addresses.bairro}, ${addresses.cidade}, ${addresses.estado}, BR`;
+    let encodedAddress = encodeURIComponent(address);
+    let endpoint = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${process.env.API_KEY}`
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        'Referer': process.env.REFERER,
+        'Content-Type': 'application/json'
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      const location = data.results[0].geometry.location;
+      const latitude = location.lat;
+      const longitude = location.lng;
+    
+      return { latitude, longitude };
+    } else {
+      throw new Error('No results found');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return { "erro": "Erro ao obter geoLocalização", "status": 404 };
+  }
+}
+
 async function avm(obj) {
   try {
     const token = await getTokenDataZap();
@@ -146,14 +181,21 @@ async function bros(obj) {
 app.post('/doc', async (req, res) => {
   try {
     const obj = req.body;
-
-    const responseGeo = await geoLocation(req.body.cep);
+    let address = {
+      estado : obj.estado,
+      bairro : obj.bairro,
+      logradouro: obj.logradouro,
+      numero : obj.numero,
+      cidade : obj.cidade
+    }
+    // const responseGeo = await geoLocation(req.body.cep);
+    const responseGeo = await geoCodingGoogleMaps(address)
 
     if (responseGeo.status === 404) {
       res.json({ "erro": "Falha ao encontrar CEP", "status": 404 });
       return;
     }
-
+    
     const objDataZap = JSON.stringify({
       "area_util": obj.areautil,
       "ano_construcao": obj.anoconstrucao,
@@ -163,8 +205,8 @@ app.post('/doc', async (req, res) => {
       "tipo_imovel": obj.tipoimovel,
       "tipo_transacao": obj.tipotransacao,
       "vagas": obj.vagas,
-      "latitude": responseGeo.location.lat,
-      "longitude": responseGeo.location.lon,
+      "latitude": responseGeo.latitude,
+      "longitude": responseGeo.longitude,
     });
 
     const responseAvm = await avm(objDataZap);
@@ -197,8 +239,8 @@ app.post('/doc', async (req, res) => {
       "vqmax": responseAvm.max,
       "numviz": responseAvm.num_vizinhos,
       "bros": responseBros,
-      "lat": responseGeo.location.lat,
-      "lon": responseGeo.location.lon
+      "lat": responseGeo.latitude,
+      "lon": responseGeo.longitude
     };
 
     // const responseLinkExcel = await linkExcel(objExcel);
@@ -407,7 +449,7 @@ async function linkExcel(obj) {
     row10.getCell(11).font = { bold: true, size: 12, name: 'Arial' }
 
     if (obj.bros.detail || Object.keys(obj.bros).length == 0) {
-      // console.log("teste");
+      
     } else {
       obj.bros.forEach((element) => {
         const row = worksheet.addRow({
